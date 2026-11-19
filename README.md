@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # PULSE AI GYM & ATHLETIC PERFORMANCE PLATFORM
 
 > **Forged by Iron. Powered by Generative AI.**  
@@ -117,7 +117,7 @@ DB_PORT=3306
 - `GET /api/classes/` & `GET /api/classes/schedules/` - Class directory & schedule
 - `POST /api/classes/book/` - Reserve a spot in a class session
 - `GET /api/memberships/plans/` - List membership tiers
-=======
+
 # Gen-AI-Gym-Management-System
 AI-Powered Gym Management System with Django, React and AI Services.
->>>>>>> ba6c9154b560aadff38a85ea38b8f461db317d73
+ba6c9154b560aadff38a85ea38b8f461db317d73
