@@ -1,0 +1,61 @@
+services:
+  # MySQL Database Service
+  db:
+    image: mysql:8.0
+    container_name: pulse_gym_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: gym_db
+      MYSQL_USER: gym_user
+      MYSQL_PASSWORD: gym_password
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Django Backend Service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: pulse_gym_backend
+    restart: always
+    entrypoint: ["/app/entrypoint.sh"]
+    command: ["gunicorn", "gym_backend.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]
+    environment:
+      - DEBUG=False
+      - SECRET_KEY=django-insecure-production-pulse-gym-ai-secret-key-2026
+      - ALLOWED_HOSTS=*
+      - DB_ENGINE=mysql
+      - DB_NAME=gym_db
+      - DB_USER=root
+      - DB_PASSWORD=rootpassword
+      - DB_HOST=db
+      - DB_PORT=3306
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # React Frontend Service
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: pulse_gym_frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  mysql_data:
